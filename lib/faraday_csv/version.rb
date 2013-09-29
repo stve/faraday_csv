@@ -1,0 +1,3 @@
+module FaradayCSV
+  VERSION = "0.0.1"
+end
