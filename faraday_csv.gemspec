@@ -17,7 +17,7 @@ Gem::Specification.new do |spec|
 
   spec.licenses    = ['MIT']
 
-  spec.files = %w(.yardopts LICENSE.md README.md Rakefile faraday_csv.gemspec)
+  spec.files = %w(.yardopts LICENSE.md CHANGELOG.md README.md Rakefile faraday_csv.gemspec)
   spec.files += Dir.glob("lib/**/*.rb")
   spec.files += Dir.glob("spec/**/*")
   spec.test_files = Dir.glob("spec/**/*")
