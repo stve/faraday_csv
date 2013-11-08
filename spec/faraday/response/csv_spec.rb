@@ -1,27 +1,43 @@
 require 'spec_helper'
 
 describe Faraday::Response::CSV do
-  let(:csv) { Faraday::Response::CSV.new }
+  let(:options) { Hash.new }
+  let(:headers) { Hash.new }
+  let(:app) do
+    lambda { |env| Faraday::Response.new(env) }
+  end
+  let(:middleware) { Faraday::Response::CSV.new(app, options) }
   let(:body) { "integer,string\n12,foobar" }
 
+  def process(response_body, content_type = nil, opts = {})
+    env = {
+      :body             => response_body,
+      :request          => opts,
+      :response_headers => Faraday::Utils::Headers.new(headers)
+    }
+    env[:response_headers]['content-type'] = content_type if content_type
+    middleware.call(env)
+  end
+
   it "parses valid csv syntax" do
-    parsed = csv.on_complete(:body => body)
-    expect(parsed).to be_an Array
+    expect(process(body).body).to be_an Array
   end
 
   it 'raises Faraday::Error::ParsingError on invalid syntax' do
+    allow(::CSV).to receive(:parse).and_raise(StandardError)
+
     expect{
-      csv.on_complete(:body => ['foo'])
+      process('foo')
     }.to raise_error Faraday::Error::ParsingError
   end
 
   context 'with options' do
-    let(:options) { { :headers => true } }
-    let(:csv) { Faraday::Response::CSV.new(lambda { |env| env }, options) }
+    let(:options) do
+      { :parser_options => { :headers => true } }
+    end
 
     it "parses valid csv syntax" do
-      parsed = csv.on_complete(:body => body)
-      expect(parsed).to be_a CSV::Table
+      expect(process(body).body).to be_a CSV::Table
     end
   end
 
