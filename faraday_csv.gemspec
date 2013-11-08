@@ -13,7 +13,7 @@ Gem::Specification.new do |spec|
   spec.description = 'CSV Parsing Middleware for use with Faraday'
   spec.summary     = spec.description
 
-  spec.add_dependency 'faraday'
+  spec.add_dependency 'faraday_middleware'
 
   spec.licenses    = ['MIT']
 
